@@ -23,13 +23,48 @@ public class StackSet {
      * min*length最大
      */
     public int largestRectangleArea(int[] heights) {
+        Stack<Integer> leftIncrease = new Stack();
+        Stack<Integer> rightIncrease = new Stack();
+        int[] leftIndex =new int[heights.length];
+        int[] rightIndex =new int[heights.length];
+        for(int left=0;left<heights.length;left++){
+            int right = heights.length-left-1;
+            while (!leftIncrease.isEmpty()&&heights[leftIncrease.peek()]>heights[left]){
+                leftIncrease.pop();
+            }
+            if(leftIncrease.isEmpty()){
+                leftIndex[left] = -1;
+            }else{
+                leftIndex[left] = leftIncrease.peek();
+            }
+            leftIncrease.push(left);
+            while (!rightIncrease.isEmpty()&&heights[rightIncrease.peek()]>heights[right]){
+                rightIncrease.pop();
+            }
+            if(rightIncrease.isEmpty()){
+                rightIndex[right] = heights.length;
+            }else{
+                rightIndex[right] = rightIncrease.peek();
+            }
+            rightIncrease.push(right);
+        }
+
+
         int max = 0;
         for(int i=0;i<heights.length;i++){
-            for(int j=i+1;j<=heights.length;j++){
+            //定宽
+            /*for(int j=i+1;j<=heights.length;j++){
                 int temp = largestRectangleArea(heights, i, j);
                 if(max<temp){
                     max = temp;
                 }
+            }*/
+            //定高
+            //int temp = largestRectangleArea(heights, i);
+            int temp = heights[i]*(rightIndex[i]-1-(leftIndex[i]+1)+1);
+
+            if(max<temp){
+                max = temp;
             }
         }
         return max;
@@ -44,6 +79,20 @@ public class StackSet {
         }
         return (end-start)*min;
     }
+
+    public int largestRectangleArea(int[] heights,int heightIndex){
+        int left = heightIndex;
+        int right = heightIndex;
+        while(left-1>=0&&heights[left-1]>=heights[heightIndex]){
+            left--;
+        }
+
+        while(right+1<heights.length&&heights[right+1]>=heights[heightIndex]){
+            right++;
+        }
+        return (right-left+1)*heights[heightIndex];
+    }
+
 
 
     /**
@@ -106,7 +155,9 @@ public class StackSet {
     }
 
     public static void main(String[] args) {
-
+        int[] ary = {2,1,2};
+        int i = new StackSet().largestRectangleArea(ary);
+        System.out.println(i);
     }
 
 }
