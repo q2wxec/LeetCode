@@ -21,24 +21,31 @@ public class StackSet {
      * 柱状图中最大的矩形
      * 找一个子数组，使得
      * min*length最大
+     *
+     * 寻找第一个小于/大于的问题用单调栈
      */
     public int largestRectangleArea(int[] heights) {
+        //由左开始的递增栈
         Stack<Integer> leftIncrease = new Stack();
+        //由右开始的递增栈
         Stack<Integer> rightIncrease = new Stack();
         int[] leftIndex =new int[heights.length];
         int[] rightIndex =new int[heights.length];
         for(int left=0;left<heights.length;left++){
-            int right = heights.length-left-1;
-            while (!leftIncrease.isEmpty()&&heights[leftIncrease.peek()]>heights[left]){
+           //左侧递增栈处理
+            while (!leftIncrease.isEmpty()&&heights[leftIncrease.peek()]>=heights[left]){
                 leftIncrease.pop();
             }
+            //记录当前下标元素，左侧第一个小于它的数的下标
             if(leftIncrease.isEmpty()){
                 leftIndex[left] = -1;
             }else{
                 leftIndex[left] = leftIncrease.peek();
             }
             leftIncrease.push(left);
-            while (!rightIncrease.isEmpty()&&heights[rightIncrease.peek()]>heights[right]){
+            //右侧递增栈处理
+            int right = heights.length-left-1;
+            while (!rightIncrease.isEmpty()&&heights[rightIncrease.peek()]>=heights[right]){
                 rightIncrease.pop();
             }
             if(rightIncrease.isEmpty()){
