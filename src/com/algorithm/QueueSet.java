@@ -107,6 +107,7 @@ public class QueueSet {
         //区间最大值，使用递减队列，队首为最大值
         int[] result = new int[nums.length-k+1];
         LinkedList<Integer> queue = new LinkedList();
+        int kIndex = 0;
         for(int i=0;i<nums.length;i++){
             //当queue为空时入队
             if(queue.isEmpty()){
@@ -116,24 +117,24 @@ public class QueueSet {
             //当入队元素少于k个时
             //入队，并保持单调
             if(i<k-1){
-                Integer last = queue.peekLast();
-                while(!queue.isEmpty()&&nums[last]<=nums[i]){
+                while(!queue.isEmpty()&&nums[queue.peekLast()]<=nums[i]){
                     queue.pollLast();
-                    last = queue.peekLast();
                 }
+                queue.addLast(i);
                 continue;
             }
             //当入队元素大于或等于k个时
             //判断队首与当前元素index是否满足k区间，不满足，则队首出队
             //入队并保持单调，记录队首值
-
-
-
+            while(i-queue.peekFirst()+1>k){
+                queue.pollFirst();
+            }
+            while(!queue.isEmpty()&&nums[queue.peekLast()]<=nums[i]){
+                queue.pollLast();
+            }
+            queue.addLast(i);
+            result[kIndex++] = nums[queue.peekFirst()];
         }
-
-
-
-
         return result;
     }
 }
