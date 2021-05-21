@@ -109,32 +109,28 @@ public class QueueSet {
         LinkedList<Integer> queue = new LinkedList();
         int kIndex = 0;
         for(int i=0;i<nums.length;i++){
-            //当queue为空时入队
-            if(queue.isEmpty()){
-                queue.addLast(i);
-                continue;
-            }
             //当入队元素少于k个时
             //入队，并保持单调
-            if(i<k-1){
-                while(!queue.isEmpty()&&nums[queue.peekLast()]<=nums[i]){
-                    queue.pollLast();
-                }
-                queue.addLast(i);
-                continue;
-            }
             //当入队元素大于或等于k个时
             //判断队首与当前元素index是否满足k区间，不满足，则队首出队
             //入队并保持单调，记录队首值
-            while(i-queue.peekFirst()+1>k){
+            while(!queue.isEmpty()&&i-queue.peekFirst()+1>k){
                 queue.pollFirst();
             }
             while(!queue.isEmpty()&&nums[queue.peekLast()]<=nums[i]){
                 queue.pollLast();
             }
             queue.addLast(i);
-            result[kIndex++] = nums[queue.peekFirst()];
+            if(i>=k){
+                result[kIndex++] = nums[queue.peekFirst()];
+            }
+
         }
         return result;
+    }
+
+    public static void main(String[] args) {
+        int[] array = {1,3,-1,-3,5,3,6,7};
+        new QueueSet().maxSlidingWindow(array,3);
     }
 }
