@@ -91,4 +91,49 @@ public class QueueSet {
         }
         return root;
     }
+
+    /**
+     * 滑动窗口最大值
+     * https://leetcode-cn.com/problems/sliding-window-maximum/description/
+     * 给你一个整数数组 nums，有一个大小为k的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k个数字。滑动窗口每次只向右移动一位。
+     *
+     * 返回滑动窗口中的最大值。
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        //区间最大值，使用递减队列，队首为最大值
+        int[] result = new int[nums.length-k+1];
+        LinkedList<Integer> queue = new LinkedList();
+        for(int i=0;i<nums.length;i++){
+            //当queue为空时入队
+            if(queue.isEmpty()){
+                queue.addLast(i);
+                continue;
+            }
+            //当入队元素少于k个时
+            //入队，并保持单调
+            if(i<k-1){
+                Integer last = queue.peekLast();
+                while(!queue.isEmpty()&&nums[last]<=nums[i]){
+                    queue.pollLast();
+                    last = queue.peekLast();
+                }
+                continue;
+            }
+            //当入队元素大于或等于k个时
+            //判断队首与当前元素index是否满足k区间，不满足，则队首出队
+            //入队并保持单调，记录队首值
+
+
+
+        }
+
+
+
+
+        return result;
+    }
 }
