@@ -24,6 +24,22 @@ public class QueueSet {
         Node next = null;
     }
 
+    class NNode {
+        public int val;
+        public List<NNode> children;
+
+        public NNode() {}
+
+        public NNode(int _val) {
+            val = _val;
+        }
+
+        public NNode(int _val, List<NNode> _children) {
+            val = _val;
+            children = _children;
+        }
+    }
+
 
 
     /**
@@ -128,6 +144,75 @@ public class QueueSet {
         }
         return result;
     }
+
+    /**
+     * https://leetcode-cn.com/problems/average-of-levels-in-binary-tree/description/
+     * 给定一个非空二叉树, 返回一个由每层节点平均值组成的数组。
+     * @param root
+     * @return
+     */
+    public List<Double> averageOfLevels(TreeNode root) {
+        List<Double> result = new ArrayList<>();
+        if(root == null){
+            return result;
+        }
+        List<TreeNode> cur = new ArrayList<>();
+        cur.add(root);
+        while(!cur.isEmpty()){
+            List<TreeNode> next = new ArrayList<>();
+            double sum = 0;
+            for(int i=0;i<cur.size();i++){
+                TreeNode temp = cur.get(i);
+                if(temp.left!=null){
+                    next.add(temp.left);
+                }
+                if(temp.right!=null){
+                    next.add(temp.right);
+                }
+                sum+=temp.val;
+            }
+            result.add(sum/cur.size());
+            cur = next;
+        }
+        return result;
+    }
+
+    /**
+     * https://leetcode-cn.com/problems/n-ary-tree-level-order-traversal/description/
+     * 给定一个 N 叉树，返回其节点值的层序遍历。（即从左到右，逐层遍历）。
+     *
+     * 树的序列化输入是用层序遍历，每组子节点都由 null 值分隔（参见示例）。
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> levelOrder(NNode root) {
+        List<List<Integer>> result = new ArrayList<>();
+        if(root == null){
+            return result;
+        }
+        Queue<NNode> queue = new LinkedList();
+        queue.offer(root);
+        int length = 1;
+        while(!queue.isEmpty()){
+            List<Integer> temp = new ArrayList<>();
+            while(length>0){
+                NNode poll = queue.poll();
+                temp.add(poll.val);
+                if(poll.children!=null){
+                    for(NNode n : poll.children){
+                        if(n!=null){
+                            queue.offer(n);
+                        }
+                    }
+                }
+                length--;
+            }
+            result.add(temp);
+            length = queue.size();
+        }
+        return result;
+    }
+
 
     public static void main(String[] args) {
         int[] array = {1,3,-1,-3,5,3,6,7};
