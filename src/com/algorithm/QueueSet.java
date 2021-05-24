@@ -137,7 +137,7 @@ public class QueueSet {
                 queue.pollLast();
             }
             queue.addLast(i);
-            if(i>=k){
+            if(i>=k-1){
                 result[kIndex++] = nums[queue.peekFirst()];
             }
 
