@@ -213,9 +213,48 @@ public class QueueSet {
         return result;
     }
 
+    /**
+     *给你一个下标从 0 开始的整数数组 nums 和一个整数 k 。
+     *
+     * 一开始你在下标 0 处。每一步，你最多可以往前跳 k 步，但你不能跳出数组的边界。也就是说，你可以从下标 i 跳到 [i + 1， min(n - 1, i + k)] 包含 两个端点的任意位置。
+     *
+     * 你的目标是到达数组最后一个位置（下标为 n - 1 ），你的 得分 为经过的所有数字之和。
+     *
+     * 请你返回你能得到的 最大得分 
+     *
+     * https://leetcode-cn.com/problems/jump-game-vi/description/
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int maxResult(int[] nums, int k) {
+        //假设走到下标为i的最大得分为max(i)
+        //则max(i) = nums[i]+max(max(i-k),```max(i-1));
+        //因而需要维持一个区间为k的递减队列
+        //递减队列，区间为[i-k,i-1]
+        LinkedList<Integer> queue = new LinkedList();
+        int[] maxI = new int[nums.length];
+        for(int i =0 ;i<nums.length;i++){
+            //计算当前下标积分最大值，则需排除不能到达当前下标的位置
+            while(!queue.isEmpty()&&queue.peekFirst()<i-k){
+                queue.pollFirst();
+            }
+            Integer first = 0;
+            if(!queue.isEmpty()){
+                first = maxI[queue.peekFirst()];
+            }
+            maxI[i] = nums[i]+first;
+            while(!queue.isEmpty()&&maxI[queue.peekLast()]<maxI[i]){
+                queue.pollLast();
+            }
+            queue.offerLast(i);
+        }
+        return maxI[nums.length-1];
+    }
+
 
     public static void main(String[] args) {
-        int[] array = {1,3,-1,-3,5,3,6,7};
-        new QueueSet().maxSlidingWindow(array,3);
+        int[] array = {10,-5,-2,4,0,3};
+        System.out.println(new QueueSet().maxResult(array,3));
     }
 }
