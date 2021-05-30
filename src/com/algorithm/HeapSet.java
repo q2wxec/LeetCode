@@ -39,29 +39,14 @@ public class HeapSet {
             ary[0] = ary[--size];
             int i = 0;
             while (i < size) {
-                if (2 * i + 2 < size) {
-                    if (ary[2 * i + 2] > ary[i] && ary[2 * i + 2] > ary[2 * i + 1]) {
-                        int temp = ary[2 * i + 2];
-                        ary[2 * i + 2] = ary[i];
-                        ary[i] = temp;
-                        i = 2 * i + 2;
-                    } else if (ary[2 * i + 1] > ary[i]) {
-                        int temp = ary[2 * i + 1];
-                        ary[2 * i + 1] = ary[i];
-                        ary[i] = temp;
-                        i = 2 * i + 1;
-                    } else {
-                        break;
-                    }
-                } else if (2 * i + 1 < size) {
-                    if (ary[2 * i + 1] > ary[i]) {
-                        int temp = ary[2 * i + 1];
-                        ary[2 * i + 1] = ary[i];
-                        ary[i] = temp;
-                        i = 2 * i + 1;
-                    } else {
-                        break;
-                    }
+                int right = 2 * i + 2;
+                int left = 2 * i + 1;
+                if (right < size && ary[right] > ary[i] && ary[right] > ary[left]) {
+                    swap(ary, right, i);
+                    i = right;
+                } else if (left < size && ary[left] > ary[i]) {
+                    swap(ary, left, i);
+                    i = left;
                 } else {
                     break;
                 }
@@ -73,15 +58,21 @@ public class HeapSet {
             ary[size] = num;
             int i = size++;
             while (i > 0) {
-                if ((i - 1) / 2 >= 0 && ary[(i - 1) / 2] < ary[i]) {
-                    int temp = ary[(i - 1) / 2];
-                    ary[(i - 1) / 2] = ary[i];
-                    ary[i] = temp;
-                    i = (i - 1) / 2;
+                int parent = (i - 1) / 2;
+                if (parent >= 0 && ary[parent] < ary[i]) {
+                    swap(ary, parent, i);
+                    i = parent;
                 } else {
                     break;
                 }
             }
+        }
+
+
+        private void swap(int[] ary, int from, int to) {
+            int temp = ary[from];
+            ary[from] = ary[to];
+            ary[to] = temp;
         }
     }
 
