@@ -1,5 +1,10 @@
 package com.algorithm;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
+
 public class HeapSet {
 
     class Heap {
@@ -101,9 +106,63 @@ public class HeapSet {
         return heap.getAry();
     }
 
+
+    /**
+     * https://leetcode-cn.com/problems/top-k-frequent-elements/description/
+     * 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int[] topKFrequent(int[] nums, int k) {
+        class NumWithCount implements Comparable<NumWithCount>{
+            int num;
+            int count;
+
+            @Override
+            public int compareTo(NumWithCount o) {
+                return this.count-o.count;
+            }
+        }
+        HashMap<Integer, NumWithCount> map = new HashMap<>();
+        for(int i : nums){
+            if(map.containsKey(i)){
+                NumWithCount numWithCount = map.get(i);
+                numWithCount.count = numWithCount.count+1;
+            }else{
+                NumWithCount numWithCount = new NumWithCount();
+                numWithCount.num = i;
+                numWithCount.count = 1;
+                map.put(i,numWithCount);
+            }
+        }
+
+        PriorityQueue<NumWithCount> priorityQueue = new PriorityQueue<>();
+        for(Map.Entry<Integer, NumWithCount> entry : map.entrySet()){
+            NumWithCount numWithCount = entry.getValue();
+            if(priorityQueue.size()<k){
+                priorityQueue.offer(numWithCount);
+                continue;
+            }
+            NumWithCount peek = priorityQueue.peek();
+            if(numWithCount.compareTo(peek)<0){
+                continue;
+            }
+            priorityQueue.poll();
+            priorityQueue.offer(numWithCount);
+        }
+
+        int[] result = new int[k];
+        for(int i=0;i<k;i++){
+            result[i] = priorityQueue.poll().num;
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
-        int[] ary = {0, 1, 1, 1, 4, 5, 3, 7, 7, 8, 10, 2, 7, 8, 0, 5, 2, 16, 12, 1, 19, 15, 5, 18, 2, 2, 22, 15, 8, 22, 17, 6, 22, 6, 22, 26, 32, 8, 10, 11, 2, 26, 9, 12, 9, 7, 28, 33, 20, 7, 2, 17, 44, 3, 52, 27, 2, 23, 19, 56, 56, 58, 36, 31, 1, 19, 19, 6, 65, 49, 27, 63, 29, 1, 69, 47, 56, 61, 40, 43, 10, 71, 60, 66, 42, 44, 10, 12, 83, 69, 73, 2, 65, 93, 92, 47, 35, 39, 13, 75};
-        new HeapSet().getLeastNumbers(ary, 75);
+        int[] ary = {1,1,1,2,2,3};
+        int[] topKFrequent = new HeapSet().topKFrequent(ary, 2);
+        System.out.println(topKFrequent);
     }
 
 
