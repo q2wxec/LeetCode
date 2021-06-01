@@ -1,6 +1,7 @@
 package com.algorithm;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HeapSet {
 
@@ -307,6 +308,61 @@ public class HeapSet {
             }
         }
         return head.next;
+    }
+
+    /**
+     * 给定两个以升序排列的整形数组 nums1 和 nums2, 以及一个整数 k。
+     * 定义一对值(u,v)，其中第一个元素来自nums1，第二个元素来自 nums2。
+     * 找到和最小的 k 对数字(u1,v1), (u2,v2) ... (uk,vk)。
+     * https://leetcode-cn.com/problems/find-k-pairs-with-smallest-sums
+     * 
+     * @param nums1
+     * @param nums2
+     * @param k
+     * @return
+     */
+
+    public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+        class ValuePair implements Comparable<ValuePair>{
+            int v1;
+            int v2;
+
+            public ValuePair(int v1, int v2) {
+                this.v1 = v1;
+                this.v2 = v2;
+            }
+
+            @Override
+            public int compareTo(ValuePair valuePair) {
+                return this.v1+this.v2-valuePair.v1-valuePair.v2;
+            }
+        }
+        Queue<ValuePair> valuePairQueue = new PriorityQueue<>(Comparator.reverseOrder());
+        for(int i = 0;i<nums1.length;i++){
+            for(int j=0;j<nums2.length;j++){
+                int num1 = nums1[i];
+                int num2 = nums2[j];
+                ValuePair valuePair = new ValuePair(num1,num2);
+                if(valuePairQueue.size()<k){
+                    valuePairQueue.add(valuePair);
+                    continue;
+                }
+                ValuePair peek = valuePairQueue.peek();
+                if(valuePair.compareTo(peek)>0){
+                    continue;
+                }
+                valuePairQueue.poll();
+                valuePairQueue.offer(valuePair);
+            }
+        }
+        List<List<Integer>> result = valuePairQueue.stream().map(v -> {
+            List<Integer> list = new ArrayList<>();
+            list.add(v.v1);
+            list.add(v.v2);
+            return list;
+        }).collect(Collectors.toList());
+
+        return result;
     }
 
     public static void main(String[] args) {
