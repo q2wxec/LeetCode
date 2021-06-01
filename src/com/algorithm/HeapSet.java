@@ -1,7 +1,6 @@
 package com.algorithm;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class HeapSet {
 
@@ -221,8 +220,64 @@ public class HeapSet {
         return result;
     }
 
-    public static void main(String[] args) {
+    /**
+     * 我们有一个由平面上的点组成的列表 points。需要从中找出 K 个距离原点 (0, 0) 最近的点。
+     * （这里，平面上两点之间的距离是欧几里德距离。）
+     * 你可以按任何顺序返回答案。除了点坐标的顺序之外，答案确保是唯一的。
 
+     * https://leetcode-cn.com/problems/k-closest-points-to-origin
+     *
+     * @param points
+     * @param k
+     * @return
+     */
+    public int[][] kClosest(int[][] points, int k) {
+        class Point implements Comparable<Point>{
+            int x;
+            int y;
+
+            public Point(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
+
+            public int sqrtDistance(){
+                return (int)(Math.pow(this.x,2)+Math.pow(this.y,2));
+            }
+
+            @Override
+            public int compareTo(Point points) {
+                return this.sqrtDistance()-points.sqrtDistance();
+            }
+        }
+        Queue<Point> pointsQueue = new PriorityQueue<Point>(Comparator.reverseOrder());
+        for(int i=0;i<points.length;i++){
+            Point p = new Point(points[i][0],points[i][1]);
+            if(pointsQueue.size()<k){
+                pointsQueue.offer(p);
+                continue;
+            }
+            Point peek = pointsQueue.peek();
+            if(p.compareTo(peek)>0){
+                continue;
+            }
+            pointsQueue.poll();
+            pointsQueue.offer(p);
+        }
+        int size = pointsQueue.size();
+        int[][] result = new int[size][2];
+        for(int i=0;i<size;i++){
+            Point poll = pointsQueue.poll();
+            result[i][0] = poll.x;
+            result[i][1] = poll.y;
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        int[][] points = {{3,3},{5,-1},{-2,4}};
+        int[][] ints = new HeapSet().kClosest(points, 2);
+        System.out.println(ints);
     }
 
 
