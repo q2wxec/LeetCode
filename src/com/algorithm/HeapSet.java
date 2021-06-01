@@ -274,6 +274,41 @@ public class HeapSet {
         return result;
     }
 
+     class ListNode {
+        int val;
+        ListNode next;
+        ListNode() {}
+        ListNode(int val) { this.val = val; }
+        ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+    }
+
+    /**
+     * 给你一个链表数组，每个链表都已经按升序排列。
+     * 请你将所有链表合并到一个升序链表中，返回合并后的链表。
+     * https://leetcode-cn.com/problems/merge-k-sorted-lists/description/
+     * @param lists
+     * @return
+     */
+    public ListNode mergeKLists(ListNode[] lists) {
+        ListNode head = new ListNode();
+        Queue<ListNode> q = new PriorityQueue<ListNode>(Comparator.comparingInt(v -> v.val));
+        for(ListNode node:lists){
+            if(node!=null){
+                q.offer(node);
+            }
+        }
+        ListNode cur = head;
+        while(!q.isEmpty()){
+            ListNode poll = q.poll();
+            cur.next = poll;
+            cur = poll;
+            if(poll.next!=null){
+                q.offer(poll.next);
+            }
+        }
+        return head.next;
+    }
+
     public static void main(String[] args) {
         int[][] points = {{3,3},{5,-1},{-2,4}};
         int[][] ints = new HeapSet().kClosest(points, 2);
