@@ -1,9 +1,7 @@
 package com.algorithm;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class HeapSet {
 
@@ -159,10 +157,72 @@ public class HeapSet {
         return result;
     }
 
+    /**
+     * 给一非空的单词列表，返回前 k 个出现次数最多的单词。
+     *
+     * 返回的答案应该按单词出现频率由高到低排序。如果不同的单词有相同出现频率，按字母顺序排序。
+     * https://leetcode-cn.com/problems/top-k-frequent-words/description/
+     * @param words
+     * @param k
+     * @return
+     */
+    public List<String> topKFrequent(String[] words, int k) {
+        class WordWithCount implements Comparable<WordWithCount>{
+            public String getWord() {
+                return word;
+            }
+
+            String word;
+            int count;
+
+            public WordWithCount(String word, int count) {
+                this.word = word;
+                this.count = count;
+            }
+
+            @Override
+            public int compareTo(WordWithCount o) {
+                if(this.count == o.count){
+                    //次数相同按字典序排列
+                    return o.word.compareTo(this.word);
+                }
+                return this.count-o.count;
+            }
+        }
+        HashMap<String, WordWithCount> countHashMap = new HashMap<>();
+        for(String word :words){
+            WordWithCount wordWithCount = new WordWithCount(word,0);
+            if(countHashMap.containsKey(word)){
+                wordWithCount = countHashMap.get(word);
+            }
+            wordWithCount.count = wordWithCount.count+1;
+            countHashMap.put(word,wordWithCount);
+        }
+
+        Queue<WordWithCount> pQueue = new PriorityQueue<WordWithCount>();
+        for(WordWithCount wordWithCount : countHashMap.values()){
+            if(pQueue.size()<k){
+                pQueue.offer(wordWithCount);
+                continue;
+            }
+            WordWithCount peek = pQueue.peek();
+            if(wordWithCount.compareTo(peek)<0){
+                continue;
+            }
+            pQueue.poll();
+            pQueue.offer(wordWithCount);
+        }
+        LinkedList<String> result = new LinkedList<>();
+        int len = pQueue.size();
+        for(int i=0;i<len;i++){
+            WordWithCount poll = pQueue.poll();
+            result.addFirst(poll.word);
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
-        int[] ary = {1,1,1,2,2,3};
-        int[] topKFrequent = new HeapSet().topKFrequent(ary, 2);
-        System.out.println(topKFrequent);
+
     }
 
 
