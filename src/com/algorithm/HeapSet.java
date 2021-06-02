@@ -413,16 +413,86 @@ public class HeapSet {
         return index;
     }
 
+
     /**
-     * [4,2,7,6,9,14,12]
-     * 5
-     * 1
+     * 有一棵特殊的苹果树，一连 n 天，每天都可以长出若干个苹果。在第 i 天，树上会长出 apples[i] 个苹果，这些苹果将会在 days[i] 天后（也就是说，第 i + days[i] 天时）腐烂，变得无法食用。也可能有那么几天，树上不会长出新的苹果，此时用 apples[i] == 0 且 days[i] == 0 表示。
+     * 你打算每天 最多 吃一个苹果来保证营养均衡。注意，你可以在这 n 天之后继续吃苹果。
+     * 给你两个长度为 n 的整数数组 days 和 apples ，返回你可以吃掉的苹果的最大数目。
+     *
+     * 没法吃还没长出来的果子！
+     *
+     * https://leetcode-cn.com/problems/maximum-number-of-eaten-apples
+     * @return
+     */
+
+    class Apples implements Comparable<Apples>{
+        int nums;
+        int expirDate;
+
+        public Apples(int nums, int expirDate) {
+            this.nums = nums;
+            this.expirDate = expirDate;
+        }
+        @Override
+        public int compareTo(Apples apples) {
+            return this.expirDate-apples.expirDate;
+        }
+    }
+
+    public int eatenApples(int[] apples, int[] days) {
+
+
+        int appleEats = 0;
+        //优先吃腐蚀日期早的苹果，故使用小顶堆
+        Queue<Apples> appleQueue = new PriorityQueue<>(Comparator.comparingInt(v-> v.expirDate));
+        for(int i=0;i<apples.length;i++){
+            int nums = apples[i];
+            int expirDate = i + days[i];
+            if(nums!=0){
+                Apples apple = new Apples(nums,expirDate);
+                appleQueue.offer(apple);
+            }
+            if(eatApple(i, appleQueue)){
+                appleEats++;
+            }
+        }
+        int day = apples.length;
+        while(!appleQueue.isEmpty()){
+            if(eatApple(day,appleQueue)){
+                appleEats++;
+            }
+            day++;
+        }
+        return appleEats;
+    }
+
+    public boolean eatApple(int day,Queue<Apples> appleQueue){
+        while(!appleQueue.isEmpty()&&appleQueue.peek().expirDate<=day){
+            appleQueue.poll();
+        }
+        if(appleQueue.isEmpty()){
+            return Boolean.FALSE;
+        }
+        Apples peek = appleQueue.peek();
+        peek.nums = peek.nums-1;
+        if(peek.nums==0){
+            appleQueue.poll();
+        }
+        return Boolean.TRUE;
+    }
+
+
+
+    /**
+     [2,1,1,4,5]
+     [10,10,6,4,2]
      * @param args
      */
     public static void main(String[] args) {
-        int[][] points = {{3,3},{5,-1},{-2,4}};
-        int[][] ints = new HeapSet().kClosest(points, 2);
-        System.out.println(ints);
+        int[] apples = {1};
+        int[] days = {1};
+        int i = new HeapSet().eatenApples(apples, days);
+        System.out.println(i);
     }
 
 
