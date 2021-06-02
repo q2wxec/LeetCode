@@ -365,6 +365,60 @@ public class HeapSet {
         return result;
     }
 
+    /**
+     * 给你一个整数数组 heights ，表示建筑物的高度。另有一些砖块 bricks 和梯子 ladders 。
+     *
+     * 你从建筑物 0 开始旅程，不断向后面的建筑物移动，期间可能会用到砖块或梯子。
+     *
+     * 当从建筑物 i 移动到建筑物 i+1（下标 从 0 开始 ）时：
+     *
+     * 如果当前建筑物的高度 大于或等于 下一建筑物的高度，则不需要梯子或砖块
+     * 如果当前建筑的高度 小于 下一个建筑的高度，您可以使用 一架梯子 或 (h[i+1] - h[i]) 个砖块
+     * 如果以最佳方式使用给定的梯子和砖块，返回你可以到达的最远建筑物的下标（下标 从 0 开始 ）。
+     *
+     * https://leetcode-cn.com/problems/furthest-building-you-can-reach
+     * @param heights
+     * @param bricks
+     * @param ladders
+     * @return
+     */
+    public int furthestBuilding(int[] heights, int bricks, int ladders) {
+        //大顶堆
+        Queue<Integer> heightQueue = new PriorityQueue<>(Comparator.reverseOrder());
+        int index = 0;
+        while(index<heights.length-1){
+            int height = heights[index+1] - heights[index];
+            //高度差大于0时，需要使用梯子或砖块
+            if(height>0){
+                heightQueue.offer(height);
+                if(height>bricks){
+                    //砖块不够，使用梯子，将梯子用在所有高度差中高度差最大的地方
+                    //并返还之前该高度使用的砖块
+                    if(ladders<=0){
+                        //梯子不够，无法继续前进
+                        break;
+                    }else{
+                        Integer poll = heightQueue.poll();
+                        bricks = bricks+poll-height;
+                        //使用梯子
+                        ladders--;
+                    }
+                }else{
+                    //砖块足够使用砖块
+                    bricks = bricks -height;
+                }
+            }
+            index++;
+        }
+        return index;
+    }
+
+    /**
+     * [4,2,7,6,9,14,12]
+     * 5
+     * 1
+     * @param args
+     */
     public static void main(String[] args) {
         int[][] points = {{3,3},{5,-1},{-2,4}};
         int[][] ints = new HeapSet().kClosest(points, 2);
