@@ -497,7 +497,7 @@ public class HeapSet {
      * @return
      */
     public int minRefuelStops(int target, int startFuel, int[][] stations) {
-        //将stations转换，下标为距离起点距离，值为该点含油量
+
         int staLen = stations.length;
         int cur = 0;
         int addFuelTimes = 0;
@@ -505,12 +505,15 @@ public class HeapSet {
         //构造大顶堆
         Queue<Integer> fuelQueue = new PriorityQueue<>(Comparator.reverseOrder());
         while(cur<target){
+            //路过加油站,将加油站可加的油放入大顶堆
             if(staIndex< staLen&& stations[staIndex][0]==cur && stations[staIndex][1]>0){
                 int fuel = stations[staIndex][1];
                 fuelQueue.offer(fuel);
                 staIndex++;
             }
+            //油箱空了，选择历史路过的加油站最大加油量加油
             if(startFuel == 0){
+                //没有可加油，无法前进退出
                 if(fuelQueue.isEmpty()){
                     break;
                 }else{
@@ -519,6 +522,8 @@ public class HeapSet {
                     addFuelTimes++;
                 }
             }
+            //若油量足够支撑到下个加油站，则前进到下个加油站
+            //否则将油耗尽，然后考虑选择历史路过得可加油最大值加油
             if(staIndex<staLen&&startFuel>=stations[staIndex][0]-cur){
                 startFuel-=(stations[staIndex][0]-cur);
                 cur = stations[staIndex][0];
