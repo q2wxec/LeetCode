@@ -482,6 +482,67 @@ public class HeapSet {
     }
 
 
+    /**
+     * 汽车从起点出发驶向目的地，该目的地位于出发位置东面 target英里处。
+     * 沿途有加油站，每个station[i]代表一个加油站，它位于出发位置东面station[i][0]英里处，并且有station[i][1]升汽油。
+     * 假设汽车油箱的容量是无限的，其中最初有startFuel升燃料。它每行驶 1 英里就会用掉 1 升汽油。
+     * 当汽车到达加油站时，它可能停下来加油，将所有汽油从加油站转移到汽车中。
+     * 为了到达目的地，汽车所必要的最低加油次数是多少？如果无法到达目的地，则返回 -1 。
+     * 注意：如果汽车到达加油站时剩余燃料为 0，它仍然可以在那里加油。如果汽车到达目的地时剩余燃料为 0，仍然认为它已经到达目的地。
+     *
+     * https://leetcode-cn.com/problems/minimum-number-of-refueling-stops
+     * @param target
+     * @param startFuel
+     * @param stations
+     * @return
+     */
+    public int minRefuelStops(int target, int startFuel, int[][] stations) {
+        class Station implements Comparable<Station>{
+            int distance;
+            int fuel;
+
+            public Station(int distance, int fuel) {
+                this.distance = distance;
+                this.fuel = fuel;
+            }
+
+            @Override
+            public int compareTo(Station station) {
+                return this.distance-station.distance;
+            }
+        }
+        //将stations转换，下标为距离起点距离，值为该点含油量
+        int staLen = stations.length;
+        Station[] stationAry = new Station[staLen];
+        for(int i = 0; i< staLen; i++){
+            stationAry[i] = new Station(stations[i][0],stations[i][1]);
+        }
+        Arrays.sort(stationAry);
+        int cur = 0;
+        int addFuelTimes = 0;
+        int staIndex = 0;
+        //构造大顶堆
+        Queue<Integer> fuelQueue = new PriorityQueue<>(Comparator.reverseOrder());
+        while(cur<target){
+            if(staIndex< staLen&& stationAry[staIndex].distance==cur && stationAry[staIndex].fuel>0){
+                int fuel = stationAry[staIndex].fuel;
+                fuelQueue.offer(fuel);
+                staIndex++;
+            }
+            if(startFuel == 0){
+                if(fuelQueue.isEmpty()){
+                    break;
+                }else{
+                    Integer poll = fuelQueue.poll();
+                    startFuel+=poll;
+                    addFuelTimes++;
+                }
+            }
+            startFuel--;
+            cur++;
+        }
+        return cur == target?addFuelTimes:-1;
+    }
 
     /**
      [2,1,1,4,5]
@@ -489,9 +550,10 @@ public class HeapSet {
      * @param args
      */
     public static void main(String[] args) {
-        int[] apples = {1};
-        int[] days = {1};
-        int i = new HeapSet().eatenApples(apples, days);
+        int target = 1000000000;
+        int startFuel = 1000;
+        int[][] stations = {{1,1000000000}};
+        int i = new HeapSet().minRefuelStops(target, startFuel,stations);
         System.out.println(i);
     }
 
