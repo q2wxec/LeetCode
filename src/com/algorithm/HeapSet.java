@@ -497,35 +497,16 @@ public class HeapSet {
      * @return
      */
     public int minRefuelStops(int target, int startFuel, int[][] stations) {
-        class Station implements Comparable<Station>{
-            int distance;
-            int fuel;
-
-            public Station(int distance, int fuel) {
-                this.distance = distance;
-                this.fuel = fuel;
-            }
-
-            @Override
-            public int compareTo(Station station) {
-                return this.distance-station.distance;
-            }
-        }
         //将stations转换，下标为距离起点距离，值为该点含油量
         int staLen = stations.length;
-        Station[] stationAry = new Station[staLen];
-        for(int i = 0; i< staLen; i++){
-            stationAry[i] = new Station(stations[i][0],stations[i][1]);
-        }
-        Arrays.sort(stationAry);
         int cur = 0;
         int addFuelTimes = 0;
         int staIndex = 0;
         //构造大顶堆
         Queue<Integer> fuelQueue = new PriorityQueue<>(Comparator.reverseOrder());
         while(cur<target){
-            if(staIndex< staLen&& stationAry[staIndex].distance==cur && stationAry[staIndex].fuel>0){
-                int fuel = stationAry[staIndex].fuel;
+            if(staIndex< staLen&& stations[staIndex][0]==cur && stations[staIndex][1]>0){
+                int fuel = stations[staIndex][1];
                 fuelQueue.offer(fuel);
                 staIndex++;
             }
@@ -538,10 +519,17 @@ public class HeapSet {
                     addFuelTimes++;
                 }
             }
-            startFuel--;
-            cur++;
+            if(staIndex<staLen&&startFuel>=stations[staIndex][0]-cur){
+                startFuel-=(stations[staIndex][0]-cur);
+                cur = stations[staIndex][0];
+            }else {
+                cur+=startFuel;
+                startFuel = 0;
+            }
+
         }
-        return cur == target?addFuelTimes:-1;
+
+        return cur >= target?addFuelTimes:-1;
     }
 
     /**
@@ -550,9 +538,9 @@ public class HeapSet {
      * @param args
      */
     public static void main(String[] args) {
-        int target = 1000000000;
-        int startFuel = 1000;
-        int[][] stations = {{1,1000000000}};
+        int target = 1000;
+        int startFuel = 83;
+        int[][] stations = {{47,220},{65,1},{98,113},{126,196},{186,218},{320,205},{686,317},{707,325},{754,104},{781,105}};
         int i = new HeapSet().minRefuelStops(target, startFuel,stations);
         System.out.println(i);
     }
