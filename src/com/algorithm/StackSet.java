@@ -1,5 +1,6 @@
 package com.algorithm;
 
+import java.util.HashMap;
 import java.util.Stack;
 
 /**
@@ -160,10 +161,49 @@ public class StackSet {
         return stack.size();
     }
 
-    public static void main(String[] args) {
-        int[] ary = {2,1,2};
-        int i = new StackSet().largestRectangleArea(ary);
-        System.out.println(i);
+    /**
+     * 给你两个 没有重复元素 的数组 nums1 和 nums2 ，其中nums1 是 nums2 的子集。
+     * 请你找出 nums1 中每个元素在 nums2 中的下一个比其大的值。
+     * nums1 中数字 x 的下一个更大元素是指 x 在 nums2 中对应位置的右边的第一个比 x 大的元素。如果不存在，对应位置输出 -1 。
+     * <p>
+     * https://leetcode-cn.com/problems/next-greater-element-i
+     *
+     * @param nums1
+     * @param nums2
+     * @return
+     */
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        int[] result = new int[nums1.length];
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums1.length; i++) {
+            map.put(nums1[i], i);
+        }
+        Stack<Integer> stack = new Stack();
+        //由右向左便利使用递减栈
+        int cur = nums2.length - 1;
+        while (cur >= 0) {
+            while (!stack.empty() && nums2[cur] >= nums2[stack.peek()]) {
+                stack.pop();
+            }
+            int temp = -1;
+            if (!stack.empty()) {
+                temp = nums2[stack.peek()];
+            }
+            if (map.containsKey(nums2[cur])) {
+                result[map.get(nums2[cur])] = temp;
+            }
+            stack.push(cur);
+            cur--;
+        }
+        return result;
     }
+
+    public static void main(String[] args) {
+        int[] ary1 = {4, 1, 2};
+        int[] ary2 = {1, 3, 4, 2};
+        int[] ints = new StackSet().nextGreaterElement(ary1, ary2);
+        System.out.println(ints);
+    }
+
 
 }

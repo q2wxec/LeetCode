@@ -538,6 +538,33 @@ public class HeapSet {
     }
 
     /**
+     * 给你一个数组 arr ，请你将每个元素用它右边最大的元素替换，
+     * 如果是最后一个元素，用 -1 替换。
+     * <p>
+     * 完成所有替换操作后，请你返回这个数组。
+     * https://leetcode-cn.com/problems/replace-elements-with-greatest-element-on-right-side/
+     *
+     * @param arr
+     * @return
+     */
+    public int[] replaceElements(int[] arr) {
+        //大顶堆
+        Queue<Integer> queue = new PriorityQueue(Comparator.reverseOrder());
+        int cur = arr.length - 1;
+        while (cur >= 0) {
+            int temp = arr[cur];
+            if (queue.isEmpty()) {
+                arr[cur] = -1;
+            } else {
+                arr[cur] = queue.peek();
+            }
+            queue.offer(temp);
+            cur--;
+        }
+        return arr;
+    }
+
+    /**
      [2,1,1,4,5]
      [10,10,6,4,2]
      * @param args
