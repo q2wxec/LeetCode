@@ -198,10 +198,42 @@ public class StackSet {
         return result;
     }
 
+    /**
+     * 给定一个循环数组（最后一个元素的下一个元素是数组的第一个元素），
+     * 输出每个元素的下一个更大元素。数字 x 的下一个更大的元素是按数组遍历顺序，
+     * 这个数字之后的第一个比它更大的数，这意味着你应该循环地搜索它的下一个更大的数。如果不存在，则输出 -1。
+     * <p>
+     * 链接：https://leetcode-cn.com/problems/next-greater-element-ii
+     *
+     * @param nums
+     * @return
+     */
+    public int[] nextGreaterElements(int[] nums) {
+        int[] result = new int[nums.length];
+        int cur = nums.length - 1;
+        Stack<Integer> stack = new Stack();
+        for (int i = 0; i < 2; i++) {
+            while (cur >= 0) {
+                while (!stack.empty() && nums[cur] >= nums[stack.peek()]) {
+                    stack.pop();
+                }
+                int temp = -1;
+                if (!stack.empty()) {
+                    temp = nums[stack.peek()];
+                }
+                result[cur] = temp;
+                stack.push(cur);
+                cur--;
+            }
+            cur = nums.length - 1;
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
-        int[] ary1 = {4, 1, 2};
-        int[] ary2 = {1, 3, 4, 2};
-        int[] ints = new StackSet().nextGreaterElement(ary1, ary2);
+        int[] ary1 = {1, 2, 1};
+
+        int[] ints = new StackSet().nextGreaterElements(ary1);
         System.out.println(ints);
     }
 
