@@ -564,6 +564,34 @@ public class HeapSet {
         return arr;
     }
 
+
+    /**
+     *有 n 个网络节点，标记为1到 n。
+     *
+     * 给你一个列表times，表示信号经过 有向 边的传递时间。times[i] = (ui, vi, wi)，其中ui是源节点，vi是目标节点， wi是一个信号从源节点传递到目标节点的时间。
+     *
+     * 现在，从某个节点K发出一个信号。需要多久才能使所有节点都收到信号？如果不能使所有节点收到信号，返回-1 。
+     *
+     * https://leetcode-cn.com/problems/network-delay-time
+     *
+     * times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2
+     *
+     */
+    public int networkDelayTime(int[][] times, int n, int k) {
+        class Side{
+            int target;
+            int cost;
+
+            public Side(int target, int cost) {
+                this.target = target;
+                this.cost = cost;
+            }
+        }
+
+
+        return -1;
+    }
+
     /**
      [2,1,1,4,5]
      [10,10,6,4,2]
